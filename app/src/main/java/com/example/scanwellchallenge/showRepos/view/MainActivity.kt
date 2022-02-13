@@ -3,16 +3,21 @@ package com.example.scanwellchallenge.showRepos.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.LinearLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.scanwellchallenge.R
 import com.example.scanwellchallenge.databinding.ActivityMainBinding
+import com.example.scanwellchallenge.rest.model.Item
+import com.example.scanwellchallenge.showRepos.adapters.RVCustomAdapter
 import com.example.scanwellchallenge.showRepos.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
     private val TAG = MainActivity::class.java.simpleName
     private lateinit var binding: ActivityMainBinding
     private lateinit var mainVM: MainViewModel
+    private lateinit var adapter: RVCustomAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +40,8 @@ class MainActivity : AppCompatActivity() {
             when (data) {
                 is MainViewModel.NetworkState.SuccessState -> {
                     Log.e(TAG, "setupObservers: $data")
+                    adapter = RVCustomAdapter(data.resultApi.items)
+                    binding.mRecyclerViewMainData.adapter = adapter
                 }
                 is MainViewModel.NetworkState.ErrorState -> {
                     //Error
@@ -44,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRV() {
+        binding.mRecyclerViewMainData.layoutManager = LinearLayoutManager(this)
 
     }
 

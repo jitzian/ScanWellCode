@@ -26,6 +26,7 @@ class MainViewModel : ViewModel() {
         .build()
 
     private lateinit var restApi: RestApi
+
     @Inject
     lateinit var retrofit: Retrofit
 
@@ -49,9 +50,13 @@ class MainViewModel : ViewModel() {
         withContext(Dispatchers.IO) {
             withTimeout(MAX_TIME_OUT) {
                 try {
+                    Log.e(
+                        TAG,
+                        "fetchData: -->> ${NetworkState.SuccessState(restApi.fetchUserData())}"
+                    )
                     _data.postValue(NetworkState.SuccessState(restApi.fetchUserData()))
                 } catch (e: Exception) {
-                    Log.e(TAG, "fetchData: ${e.message}")
+                    Log.e(TAG, "fetchData:Error: ${e.message}")
                     _data.postValue(NetworkState.ErrorState(e.message))
                 }
             }
@@ -59,8 +64,8 @@ class MainViewModel : ViewModel() {
     }
 
     sealed class NetworkState {
-        class SuccessState(resultApi: ResultApi) : NetworkState()
-        class ErrorState(message: String?) : NetworkState()
+        class SuccessState(val resultApi: ResultApi) : NetworkState()
+        class ErrorState(val message: String?) : NetworkState()
     }
 
 }
