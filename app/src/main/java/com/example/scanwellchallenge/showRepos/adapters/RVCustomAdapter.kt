@@ -11,9 +11,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.scanwellchallenge.R
 import com.example.scanwellchallenge.rest.model.Item
+import com.example.scanwellchallenge.showRepos.callback.ItemClickListener
 import com.squareup.picasso.Picasso
 
-class RVCustomAdapter(private val lstRes: List<Item>?) :
+class RVCustomAdapter(
+    private val lstRes: List<Item>?,
+    private val itemClickListener: ItemClickListener
+) :
     RecyclerView.Adapter<RVCustomAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,8 +27,11 @@ class RVCustomAdapter(private val lstRes: List<Item>?) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        lstRes?.get(position)?.let {
-            holder.bindData(it)
+        lstRes?.get(position)?.let { item ->
+            holder.bindData(item)
+            holder.itemView.setOnClickListener {
+                itemClickListener.onItemClickListener(item)
+            }
         }
     }
 
@@ -74,6 +81,4 @@ class RVCustomAdapter(private val lstRes: List<Item>?) :
 
         }
     }
-
-
 }

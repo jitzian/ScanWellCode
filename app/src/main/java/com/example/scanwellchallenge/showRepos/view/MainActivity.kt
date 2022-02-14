@@ -1,19 +1,20 @@
 package com.example.scanwellchallenge.showRepos.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.scanwellchallenge.R
+import com.example.scanwellchallenge.constants.GlobalConstants.Companion.locationParam
+import com.example.scanwellchallenge.constants.GlobalConstants.Companion.nameParam
 import com.example.scanwellchallenge.databinding.ActivityMainBinding
 import com.example.scanwellchallenge.rest.model.Item
 import com.example.scanwellchallenge.showRepos.adapters.RVCustomAdapter
+import com.example.scanwellchallenge.showRepos.callback.ItemClickListener
 import com.example.scanwellchallenge.showRepos.viewmodel.MainViewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ItemClickListener {
     private val TAG = MainActivity::class.java.simpleName
     private lateinit var binding: ActivityMainBinding
     private lateinit var mainVM: MainViewModel
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             when (data) {
                 is MainViewModel.NetworkState.SuccessState -> {
                     Log.e(TAG, "setupObservers: $data")
-                    adapter = RVCustomAdapter(data.resultApi.items)
+                    adapter = RVCustomAdapter(data.resultApi.items, this)
                     binding.mRecyclerViewMainData.adapter = adapter
                 }
                 is MainViewModel.NetworkState.ErrorState -> {
@@ -52,7 +53,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupRV() {
         binding.mRecyclerViewMainData.layoutManager = LinearLayoutManager(this)
+    }
 
+    override fun onItemClickListener(item: Item) {
+        val bundle = Bundle().apply {
+            putString(locationParam, item.location)
+            putString(nameParam, item.displayName)
+        }
+
+        val detailsDialog = DetailsDialog()
+        detailsDialog.arguments = bundle
+        detailsDialog.show(supportFragmentManager, TAG)
     }
 
 }
